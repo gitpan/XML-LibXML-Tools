@@ -1,7 +1,3 @@
-Changes
-LICENSE
-MANIFEST
-README
 Makefile.PL
 lib/XML/LibXML/Tools.pm
 t/01_basic.t
@@ -9,3 +5,9 @@ t/02_complex2dom.t
 t/03_add.t
 t/04_update.t
 t/05_delete.t
+t/06_iconv.t
+t/runtest.pl
+MANIFEST
+README
+LICENSE
+Changelog

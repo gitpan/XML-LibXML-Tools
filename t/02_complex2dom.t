@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl -Tw
 
 BEGIN {
-  unshift @INC, "../../../../../lib-perl";
+  use lib "../../../../../lib-perl";
 }
 
 use Test::More tests => 5;
@@ -51,7 +51,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 
 { # nodes and comments
   my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>data</page><!-- Commentaar? --></root>\n|;
-  my $dom = $tool->complex2Dom( data => [ root => [ page => "data", 
+  my $dom = $tool->complex2Dom( data => [ root => [ page => "data",
 						    $tool->comment("Commentaar?"),
 						  ] ] );
   my $str_res = $dom->toString(0);

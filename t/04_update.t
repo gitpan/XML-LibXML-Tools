@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl -Tw
 
 BEGIN {
-  unshift @INC, "../../../../../lib-perl";
+  use lib "../../../../../lib-perl";
 }
 
 use Test::More tests => 11;
@@ -14,15 +14,15 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 
 
 #
-# array based playfield 
+# array based playfield
 #
 
 { my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>new data</page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data" ] ] );
-  $tool->domUpdate(dom => $dom, 
+  $tool->domUpdate(dom => $dom,
 		   xpath => "/root",
 		   data => [ page => "new data" ] );
-  
+
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'array default')|| diag("$str_res ne $XMLCHK");
 }
@@ -43,7 +43,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
   my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page atrib="new value">data</page></root>
 };
-  my $dom = $tool->complex2Dom( data => [ root => [ page => [ $tool->attribute("atrib", "value"), 
+  my $dom = $tool->complex2Dom( data => [ root => [ page => [ $tool->attribute("atrib", "value"),
 							      "data" ] ] ] );
   $tool->domUpdate( dom => $dom,
 		    xpath => "/root/page",
@@ -126,7 +126,7 @@ my $addingDom = $tool->complex2Dom( data => [ this => [ node => "data",
   my $dom = $tool->complex2Dom(data => [ root => [ page => '' ] ]);
   $tool->domUpdate( dom => $dom,
 		    xpath => "/root/page",
-		    data => [ $addingDom->findnodes("/this/node[1]"), 
+		    data => [ $addingDom->findnodes("/this/node[1]"),
 			      $addingDom->findnodes("/this/node[2]") ] );
   my $chk = $dom->toString(0);
   is($chk,$XMLCHK,"Add XML::LibXML::NodeList")||diag("$chk ne $XMLCHK");

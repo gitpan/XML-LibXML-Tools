@@ -3,7 +3,7 @@ package XML::LibXML::Tools;
 BEGIN {
   @XML::LibXML::Tools::ISA = qw( Exporter );
   @XML::LibXML::Tools::EXPORT = qw( BEFORE AFTER TO );
-  $XML::LibXML::Tools::VERSION = '0.72';
+  $XML::LibXML::Tools::VERSION = '0.80';
 }
 
 use strict;
@@ -12,7 +12,6 @@ use Exporter;
 our $croak = 1;
 
 use XML::LibXML;
-use Text::Iconv;
 use Carp;
 
 use constant BEFORE => "before";
@@ -43,9 +42,21 @@ use Class::AccessorMaker {
 sub init {
   my ($self) = @_;
 
-  # XML likes UTF8 - make converter
-  $self->objectIconv(Text::Iconv->new($self->encoding,$self->toEncoding));
-  $self->objectIconv->raise_error(1);
+  # XML likes UTF8 - try to make converter
+  eval "use Text::Iconv;";
+
+  if ( !$@ ) {
+    my $iconv;
+    eval {
+      local $SIG{__DIE__} = sub {};
+      $iconv = Text::Iconv->new($self->encoding,$self->toEncoding)
+    };
+
+    $iconv && do { $self->objectIconv($iconv);
+		   $self->objectIconv->raise_error(1);
+		 };
+  }
+
   $self->croakOnError($croak);
   return $self;
 }
@@ -59,7 +70,7 @@ my @already_seen = ();
 
 sub addError{
   my $self = shift;
-  my $string = shift; 
+  my $string = shift;
 
   $self->errorMsg( ( ($self->errorMsg()) ? ($self->errorMsg()."\n") : "") . $string );
   $self->error(1);
@@ -155,7 +166,7 @@ sub complex2Dom {
     $self->addError("complex2Dom: $@") if $@;
   }
   my $root = $dom->getDocumentElement;
-  my $res = $self->array2Dom( %param, 
+  my $res = $self->array2Dom( %param,
 			      data => $ref,
 			      depth => $param{depth}+1,
 			      dom => $dom,
@@ -224,7 +235,7 @@ sub array2Dom{
 
       } else {
 	if( defined $val ) {
-	  my $element = $param{dom}->createElement($key);	
+	  my $element = $param{dom}->createElement($key);
 	  $param{node}->addChild($element);
 
           # also support XML-doms!
@@ -410,7 +421,7 @@ sub domUpdate {
       $value = shift @tmp;
 
       if ( !ref($value) ) {
-	$value = $self->convert( %param, 
+	$value = $self->convert( %param,
 				 data => $value,
 				 depth => $param{depth}+1 );
       }
@@ -432,7 +443,7 @@ sub domUpdate {
       $self->addError("domUpdate doesn't support comments. Referting to domAdd");
       $self->croakOnError($prev);
 
-      $self->domAdd(%param, 
+      $self->domAdd(%param,
 		    depth => $param{depth}+1,
 		    data => [ $key ]);
 
@@ -446,7 +457,7 @@ sub domUpdate {
 
 	if (!$node) {
 	  # perhaps adding it is possible...
-	  $self->domAdd( %param, 
+	  $self->domAdd( %param,
 			 depth => $param{depth}+1,
 			 data => [ $key => $value ] );
 	  next;
@@ -560,7 +571,7 @@ sub domAdd {
 
     } elsif ( my $comment = isComment($key) ) {
       $self->addNode( %param,
-		      depth => $param{depth}+1, 
+		      depth => $param{depth}+1,
 		      newNode => $param{dom}->createComment( $comment ) );
 
     } else {
@@ -570,7 +581,7 @@ sub domAdd {
       # make a dom for arrays
       if ( $type =~ /ARRAY/ ) {
 	$key = $self->complex2Dom( %param,
-				   data => $key, 
+				   data => $key,
 				   depth => $param{depth}+1);
 	$type = ref ( $key );
       }
@@ -603,20 +614,20 @@ sub domAdd {
 	# perhaps it is a xml-scalar-ref
 	if ( $key =~ /SCALAR/ ) {
 	  my $pkey;
-	  eval { 
+	  eval {
 	    local $SIG{__DIE__} = sub {};
-	    $pkey = $key->nodeName; 
+	    $pkey = $key->nodeName;
 	  };
 	  $key = $pkey if !$@;
         }
-	
+
 	if ( ref($value) ) {
 	  my $array = $value;
 	  if ( $key ) { $array = [$key => $value] }
 
-	  $self->addNode( %param, 
+	  $self->addNode( %param,
 			  depth => $param{depth}+1,
-			  newNode => 
+			  newNode =>
 			  $self->makeXMLFragment( %param,
 						  depth => $param{depth}+1,
 						  data => $array )
@@ -657,7 +668,7 @@ sub addNode {
 
   warn "-" x $param{depth}, "addNode\n" if $self->showPath;
 
-  if ( $param{node}->isSameNode ( $param{dom}->getDocumentElement ) 
+  if ( $param{node}->isSameNode ( $param{dom}->getDocumentElement )
        and $param{location} ne TO ) {
     $self->addError("addNode: can't add BEFORE or AFTER the root element");
   }
@@ -738,8 +749,11 @@ sub getConverter {
   }
 
   my $iconv;
-  if ( $param{encoding} and $param{encoding} ne $self->encoding ) {
-    $iconv = Text::Iconv->new($param{encoding}, $self->toEncoding);
+  if ( $param{encoding} ne $self->encoding ) {
+    eval {
+      local $SIG{__DIE__} = sub {};
+      $iconv = Text::Iconv->new($param{encoding}, $self->toEncoding)
+    };
   }
 
   return $iconv || $self->objectIconv;
@@ -772,7 +786,7 @@ sub analyseXpath {
   my ( $self, $xpath ) = @_;
 
   # provides last part,number of xpath, parent
-  # eg /newlsetter[1]/section[2]/parot[2] 
+  # eg /newlsetter[1]/section[2]/parot[2]
   #
   # returns ('parot', 2, '/newlsetter[1]/section[2]')
   #
@@ -861,15 +875,15 @@ XML::LibXML::Tools - An API for easy XML::LibXML DOM manipulation
   $XML::LibXML::Tools::croak = 0;
 
   my $dom = $lxt->complex2Dom( data =>
-			       [ document => 
-				 [ node => 
-				   [ deeper_content => 
+			       [ document =>
+				 [ node =>
+				   [ deeper_content =>
 				     [ $tools->attribute("attribute",
 							 "value"),
 				       "deep content" ],
 				   ],
 				   node => [ "content" ]
-				 ] 
+				 ]
 			       ] );
 
   # change content
@@ -891,7 +905,7 @@ XML::LibXML::Tools - An API for easy XML::LibXML DOM manipulation
 		   data => [ node => [ $otherDom ] ] );
 
   # delete some nodes
-  $tools->domDelete( xpath => "/document", 
+  $tools->domDelete( xpath => "/document",
 		     deleteXPath => "./node[1]" );
 
 =head1 DESCRIPTION
@@ -918,7 +932,7 @@ Methods are all accessors, they are show with their default value.
 
 =head2 encoding ( "ISO-8859-1" )
 
-  Default input encoding. 
+  Default input encoding.
   Overwritten by the encoding parameter for each function.
 
 =head2 toEncoding ( "UTF-8" )
@@ -938,7 +952,7 @@ Methods are all accessors, they are show with their default value.
 
 =head2 objectDom ( "" )
 
-  Filled by complex2Dom if not yet defined, or you. 
+  Filled by complex2Dom if not yet defined, or you.
 
   Used so that you can skip the dom-parameter for each function which
   is meant to work at this DOM.
@@ -967,7 +981,7 @@ Methods are all accessors, they are show with their default value.
 
 =head1 FUNCTION PARAMETERS
 
-Most of these functions operate parameter based, 
+Most of these functions operate parameter based,
 
   eg: $lxt->domAdd(node => $node, dom => $dom, data => $ref )
 
@@ -1036,7 +1050,7 @@ parameters.
   Used in domDelete. Delete everything that complies to deleteXPath
   from the selected node.
 
-  delete is shorthand 
+  delete is shorthand
 
 =head2 showpath
 
@@ -1055,7 +1069,7 @@ All these functions return undef once an error has been raised.
 
 =head2 $dom = complex2Dom ( data => $ref )
 
-  DESCRIPTION 
+  DESCRIPTION
     Turns an array reference into a L<XML::LibXML::Document>, taking
     array->[0] as the rootname. calls array2Dom for this purpose.
 
@@ -1136,6 +1150,12 @@ All these functions return undef once an error has been raised.
   0.71 - released
   0.72 - minor documentation changes. (it broke on CPAN ... :( )
 
+  0.80 - made sure this also works with a 'broken' Text::Iconv
+
+=head1 SEE ALSO
+
+L<XML::LibXML>
+
 =head1 KNOWN ISSUES
 
   - Unfixed checking problem.
@@ -1148,11 +1168,9 @@ All these functions return undef once an error has been raised.
 Originally Written by Robert Bakker as an Exporter.
 
 Then re-written by Hartog de Mik to:
-   beautify code. 
+   beautify code.
    chop up into functions.
 
-Then finaly re-written by Hartog de Mik into the current OO implementation
+Then finaly re-written by Hartog de Mik into the current OO
+implementation
 
-=head1 SEE ALSO
-
-L<XML::LibXML>

@@ -1,7 +1,7 @@
 #!/usr/local/bin/perl -Tw
 
 BEGIN {
-  unshift @INC, "../../../../../lib-perl";
+  use lib "../../../../../lib-perl";
 }
 
 use Test::More tests => 5;
@@ -18,7 +18,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
   $tool->domDelete( dom    => $dom, 
 		    xpath  => "/root",
 		    deleteXPath => "./page" );
-  
+
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'remove one node')|| diag("$str_res ne $XMLCHK");
 }
@@ -28,10 +28,10 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data",
 						    page => "more data",
 						  ] ] );
-  $tool->domDelete( dom    => $dom, 
+  $tool->domDelete( dom    => $dom,
 		    xpath  => "/root",
 		    deleteXPath => "./page" );
-  
+
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'remove two nodes')|| diag("$str_res ne $XMLCHK");
 }
@@ -42,10 +42,10 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 						    page => "middle data",
 						    page => "last data",
 						  ] ] );
-  $tool->domDelete( dom    => $dom, 
+  $tool->domDelete( dom    => $dom,
 		    xpath  => "/root",
 		    deleteXPath => "./page[2]" );
-  
+
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'remove middle node')|| diag("$str_res ne $XMLCHK");
 
@@ -57,10 +57,10 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 						    page => "middle data",
 						    page => "last data",
 						  ] ] );
-  $tool->domDelete( dom    => $dom, 
+  $tool->domDelete( dom    => $dom,
 		    xpath  => "/root",
 		    delete => "./page[3]" );
-  
+
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'remove last node using shorthand')|| diag("$str_res ne $XMLCHK");
 
@@ -68,14 +68,16 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 
 { # remove attribute
   my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>data</page><page>more data</page></root>\n|;
-  my $dom = $tool->complex2Dom( data => [ root => [ page => [ $tool->attribute("attr","value"),
-							      "data" ],
-						    page => "more data",
-						  ] ] );
-  $tool->domDelete( dom    => $dom, 
+  my $dom = $tool->complex2Dom( data => [ root =>
+					  [ page => 
+					    [ $tool->attribute("attr","value"),
+					      "data" ],
+					    page => "more data",
+					  ] ] );
+  $tool->domDelete( dom    => $dom,
 		    xpath  => "/root",
 		    delete => './page/@attr' );
-  
+
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'remove attribute')|| diag("$str_res ne $XMLCHK");
 }
