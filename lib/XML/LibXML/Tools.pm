@@ -3,7 +3,7 @@ package XML::LibXML::Tools;
 BEGIN {
   @XML::LibXML::Tools::ISA = qw( Exporter );
   @XML::LibXML::Tools::EXPORT = qw( BEFORE AFTER TO );
-  $XML::LibXML::Tools::VERSION = '0.71';
+  $XML::LibXML::Tools::VERSION = '0.72';
 }
 
 use strict;
@@ -524,7 +524,7 @@ sub domAdd {
   }
 
   $self->checkParams( params => \%param,
-		      required => [ qw(dom node data) ]) || return undef;  
+		      required => [ qw(dom node data) ]) || return undef;
 
   my $prev = $self->showPath;
   $self->showPath($param{showpath}) if exists $param{showpath};
@@ -849,7 +849,7 @@ __END__
 
 =head1 NAME
 
-L<XML::LibXML::Tools> - An API for easy XML::LibXML DOM manipulation
+XML::LibXML::Tools - An API for easy XML::LibXML DOM manipulation
 
 =head1 SYNOPSIS
 
@@ -1131,9 +1131,10 @@ All these functions return undef once an error has been raised.
 
   Resets the error stack and flag.
 
-=head1 SEE ALSO
+=head1 CHANGES
 
-L<XML::LibXML>
+  0.71 - released
+  0.72 - minor documentation changes. (it broke on CPAN ... :( )
 
 =head1 KNOWN ISSUES
 
@@ -1152,3 +1153,6 @@ Then re-written by Hartog de Mik to:
 
 Then finaly re-written by Hartog de Mik into the current OO implementation
 
+=head1 SEE ALSO
+
+L<XML::LibXML>
