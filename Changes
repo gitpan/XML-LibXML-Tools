@@ -1,0 +1,5 @@
+Revision history for Perl module XML::LibXML::Tools
+
+0.73 Sat Jan 01 2004
+        - initial releas - not yet CPAN, need to talk to XML::LibXML
+        namespace owner first...
