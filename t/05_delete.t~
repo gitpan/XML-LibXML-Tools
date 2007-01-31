@@ -13,7 +13,7 @@ $XML::LibXML::Tools::croak = 0;
 my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 
 { # remove one node
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root/>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root/>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data" ] ] );
   $tool->domDelete( dom    => $dom, 
 		    xpath  => "/root",
@@ -24,7 +24,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # remove two nodes
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root/>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root/>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data",
 						    page => "more data",
 						  ] ] );
@@ -37,7 +37,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # remove middle node
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page>first data</page><page>last data</page></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>first data</page><page>last data</page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "first data",
 						    page => "middle data",
 						    page => "last data",
@@ -52,7 +52,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # remove last node using shorthand
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page>data</page><page>middle data</page></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>data</page><page>middle data</page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data",
 						    page => "middle data",
 						    page => "last data",
@@ -67,7 +67,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # remove attribute
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page>data</page><page>more data</page></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>data</page><page>more data</page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root =>
 					  [ page => 
 					    [ $tool->attribute("attr","value"),

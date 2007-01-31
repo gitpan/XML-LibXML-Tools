@@ -17,7 +17,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 # array based playfield
 #
 
-{ my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page>new data</page></root>\n|;
+{ my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>new data</page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data" ] ] );
   $tool->domUpdate(dom => $dom,
 		   xpath => "/root",
@@ -28,7 +28,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # add comment
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page attribute="value">data</page></root>
 };
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data" ] ] );
@@ -40,7 +40,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # update attribute
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page atrib="new value">data</page></root>
 };
   my $dom = $tool->complex2Dom( data => [ root => [ page => [ $tool->attribute("atrib", "value"),
@@ -53,7 +53,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # comment
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page>data</page><!-- foo, bar --></root>
 };
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data" ] ] );
@@ -65,7 +65,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # comment + attribute
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page atrib="value">data<!-- foo, bar --></page></root>
 };
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data" ] ] );
@@ -78,7 +78,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # comment + attribute
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page atrib="new value">data<!-- foo, bar --></page></root>
 };
   my $dom = $tool->complex2Dom( data => [ root => [ page => [ $tool->attribute("atrib", "value"),
@@ -107,7 +107,7 @@ my $addingDom = $tool->complex2Dom( data => [ this => [ node => "data",
 # </this>
 
 { # add a node
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page><node>data</node></page></root>
 };
   my $dom = $tool->complex2Dom(data => [ root => [ page => '' ] ]);
@@ -120,7 +120,7 @@ my $addingDom = $tool->complex2Dom( data => [ this => [ node => "data",
 }
 
 { # add a nodeset
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page><node>data</node><node>more data</node></page></root>
 };
   my $dom = $tool->complex2Dom(data => [ root => [ page => '' ] ]);
@@ -133,7 +133,7 @@ my $addingDom = $tool->complex2Dom( data => [ this => [ node => "data",
 }
 
 { # add a dom
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page>data</page><this><node>data</node><node>more data</node><node><deeper_node>deep data</deeper_node></node></this></root>
 };
   my $dom = $tool->complex2Dom(data => [ root => [ page => 'data' ] ]);
@@ -145,7 +145,7 @@ my $addingDom = $tool->complex2Dom( data => [ this => [ node => "data",
 }
 
 { # add an array and a nodeset
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page><array>node</array><node><deeper_node>deep data</deeper_node></node></page></root>
 };
   my $dom = $tool->complex2Dom(data => [ root => [ page => '' ] ]);
@@ -159,7 +159,7 @@ my $addingDom = $tool->complex2Dom( data => [ this => [ node => "data",
 }
 
 { # add it all
-  my $XMLCHK = qq{<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq{<?xml version="1.0"?>
 <root><page><array><node>data</node></array><node><node>data</node></node><nodelist><node>more data</node></nodelist><dom><this><node>data</node><node>more data</node><node><deeper_node>deep data</deeper_node></node></this></dom></page></root>
 };
   my $dom = $tool->complex2Dom(data => [ root => [ page => '' ] ]);

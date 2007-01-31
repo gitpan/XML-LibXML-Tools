@@ -13,14 +13,14 @@ $XML::LibXML::Tools::croak = 0;
 my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 
 { # just one node
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root></root>\n|;
   my $dom = $tool->complex2Dom( data => [ "root" => "" ] );
   my $str_res = $dom->toString(0);
   ok($str_res eq $XMLCHK, 'just one node')|| diag("$str_res ne $XMLCHK");
 }
 
 { # lots of nodes
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page>data</page><test>more</test><tests>5</tests></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>data</page><test>more</test><tests>5</tests></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data",
 						    test => "more",
 						    tests => 5,
@@ -30,7 +30,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # nested nodes
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page><page1>data</page1></page><page><page2>more data</page2></page></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page><page1>data</page1></page><page><page2>more data</page2></page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => [ page1 => "data" ],
 						    page => [ page2 => "more data" ],
 						  ] ] );
@@ -39,7 +39,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # nodes with attributes
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page attr="value">data</page><page>attribute less data</page></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page attr="value">data</page><page>attribute less data</page></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => [ $tool->attribute("attr", "value"),
 							      "data" ],
 						    page => "attribute less data",
@@ -50,7 +50,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # nodes and comments
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page>data</page><!-- Commentaar? --></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page>data</page><!-- Commentaar? --></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page => "data",
 						    $tool->comment("Commentaar?"),
 						  ] ] );

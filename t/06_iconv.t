@@ -4,7 +4,8 @@ BEGIN {
   use lib "../../../../../lib-perl";
 }
 
-use Test::More tests => 5;
+# use Test::More tests => 5;
+use Test::More skip_all => "No longer supports conversion";
 use strict;
 
 use XML::LibXML::Tools;

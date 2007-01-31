@@ -24,7 +24,7 @@ like($tool, qr/XML::LibXML::Tools/, "object creation")
 is ( $tool->croakOnError, 0, 'croakOnError listens to $croak' );
 
 { # creation
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page1>1</page1><page2>2</page2></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page1>1</page1><page2>2</page2></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page1 => 1,
 						    page2 => 2 ] ] );
   my $str_res = $dom->toString(0);
@@ -33,7 +33,7 @@ is ( $tool->croakOnError, 0, 'croakOnError listens to $croak' );
 
 
 { # test attribute
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root wow="ok"><page/></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root wow="ok"><page/></root>\n|;
   my $dom = $tool->complex2Dom( data =>
 				[ root =>
 				  [ $tool->attribute("wow" => "ok"),
@@ -44,7 +44,7 @@ is ( $tool->croakOnError, 0, 'croakOnError listens to $croak' );
 }
 
 { # test comment
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><!-- foo bar --><page/></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><!-- foo bar --><page/></root>\n|;
   my $dom = $tool->complex2Dom( data =>
 				[ root =>
 				  [ $tool->comment("foo bar"),

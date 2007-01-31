@@ -120,7 +120,7 @@ sub complex2Dom {
 
   # create ourselves a Dom.
   my $dom = XML::LibXML::Document->new();
-  $dom->setEncoding( "utf-8" );
+  $dom->setEncoding( "UTF-8" );
 
   # find root element
   my $ref = $param{data};

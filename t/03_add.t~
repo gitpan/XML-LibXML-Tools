@@ -15,7 +15,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 { # adding after
   my $dom = $tool->complex2Dom( data => [ root => [ page1 => 1 ] ] );
 
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page1>1</page1><page2>1</page2></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page1>1</page1><page2>1</page2></root>\n|;
   $tool->domAdd(dom      => $dom,
 		location => AFTER,
 		xpath    => "/root/page1",
@@ -26,7 +26,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # trying to add after the root
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page1>1</page1></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page1>1</page1></root>\n|;
   my $dom = $tool->complex2Dom( data => [ root => [ page1 => 1 ] ] );
 
   $tool->domAdd(dom      => $dom,
@@ -42,7 +42,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # add a nodeset
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>\n<root><page1>1<root><page1>1</page1><page2>2</page2></root></page1><page2>2</page2></root>\n|;
+  my $XMLCHK = qq|<?xml version="1.0"?>\n<root><page1>1<root><page1>1</page1><page2>2</page2></root></page1><page2>2</page2></root>\n|;
   my $dom = $tool->complex2Dom(data => [ root => [ page1 => "1",
 						   page2 => "2" ] ]);
   $tool->domAdd(dom => $dom,
@@ -54,7 +54,7 @@ my $tool = XML::LibXML::Tools->new( croakOnError => 0);
 }
 
 { # an element.
-  my $XMLCHK = qq|<?xml version="1.0" encoding="utf-8"?>
+  my $XMLCHK = qq|<?xml version="1.0"?>
 <root><page>data</page><page>data</page></root>
 |;
 
